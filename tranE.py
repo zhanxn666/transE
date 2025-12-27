@@ -55,8 +55,8 @@ class TransE:
             if cycleIndex % 100 == 0:
                 print("第%d次循环"%cycleIndex)
                 print(self.loss)
-                self.writeRelationVector("c:\\relationVector.txt")
-                self.writeEntilyVector("c:\\entityVector.txt")
+                self.writeRelationVector("/home/e706/zhanxiangning/KG/transE/relationVector.txt")
+                self.writeEntityVector("/home/e706/zhanxiangning/KG/transE/entityVector.txt")
                 self.loss = 0
 
     def getSample(self, size):
@@ -89,17 +89,17 @@ class TransE:
         
         for tripletWithCorruptedTriplet in Tbatch:
             headEntityVector = copyEntityList[tripletWithCorruptedTriplet[0][0]]#tripletWithCorruptedTriplet是原三元组和打碎的三元组的元组tuple
-            tailEntityVector = copyEntityList[tripletWithCorruptedTriplet[0][1]]
-            relationVector = copyRelationList[tripletWithCorruptedTriplet[0][2]]
+            tailEntityVector = copyEntityList[tripletWithCorruptedTriplet[0][2]]
+            relationVector = copyRelationList[tripletWithCorruptedTriplet[0][1]]
             headEntityVectorWithCorruptedTriplet = copyEntityList[tripletWithCorruptedTriplet[1][0]]
-            tailEntityVectorWithCorruptedTriplet = copyEntityList[tripletWithCorruptedTriplet[1][1]]
+            tailEntityVectorWithCorruptedTriplet = copyEntityList[tripletWithCorruptedTriplet[1][2]]
             
             headEntityVectorBeforeBatch = self.entityList[tripletWithCorruptedTriplet[0][0]]#tripletWithCorruptedTriplet是原三元组和打碎的三元组的元组tuple
-            tailEntityVectorBeforeBatch = self.entityList[tripletWithCorruptedTriplet[0][1]]
-            relationVectorBeforeBatch = self.relationList[tripletWithCorruptedTriplet[0][2]]
+            tailEntityVectorBeforeBatch = self.entityList[tripletWithCorruptedTriplet[0][2]]
+            relationVectorBeforeBatch = self.relationList[tripletWithCorruptedTriplet[0][1]]
             headEntityVectorWithCorruptedTripletBeforeBatch = self.entityList[tripletWithCorruptedTriplet[1][0]]
-            tailEntityVectorWithCorruptedTripletBeforeBatch = self.entityList[tripletWithCorruptedTriplet[1][1]]
-            
+            tailEntityVectorWithCorruptedTripletBeforeBatch = self.entityList[tripletWithCorruptedTriplet[1][2]]
+
             if self.L1:
                 distTriplet = distanceL1(headEntityVectorBeforeBatch, tailEntityVectorBeforeBatch, relationVectorBeforeBatch)
                 distCorruptedTriplet = distanceL1(headEntityVectorWithCorruptedTripletBeforeBatch, tailEntityVectorWithCorruptedTripletBeforeBatch ,  relationVectorBeforeBatch)
@@ -146,7 +146,7 @@ class TransE:
         self.entityList = copyEntityList
         self.relationList = copyRelationList
         
-    def writeEntilyVector(self, dir):
+    def writeEntityVector(self, dir):
         print("写入实体")
         entityVectorFile = open(dir, 'w')
         for entity in self.entityList.keys():
@@ -215,17 +215,17 @@ def openTrain(dir,sp="\t"):
     return num, list
 
 if __name__ == '__main__':
-    dirEntity = "C:\\data\\entity2id.txt"
+    dirEntity = "/home/e706/zhanxiangning/Tianchi/KnowledgeGraph/OpenBG500/OpenBG500_entity2text.tsv"
     entityIdNum, entityList = openDetailsAndId(dirEntity)
-    dirRelation = "C:\\data\\relation2id.txt"
+    dirRelation = "/home/e706/zhanxiangning/Tianchi/KnowledgeGraph/OpenBG500/OpenBG500_relation2text.tsv"
     relationIdNum, relationList = openDetailsAndId(dirRelation)
-    dirTrain = "C:\\data\\train.txt"
+    dirTrain = "/home/e706/zhanxiangning/Tianchi/KnowledgeGraph/OpenBG500/OpenBG500_train.tsv"
     tripleNum, tripleList = openTrain(dirTrain)
     print("打开TransE")
     transE = TransE(entityList,relationList,tripleList, margin=1, dim = 100)
     print("TranE初始化")
     transE.initialize()
-    transE.transE(15000)
-    transE.writeRelationVector("c:\\relationVector.txt")
-    transE.writeEntilyVector("c:\\entityVector.txt")
+    transE.transE(200)
+    transE.writeRelationVector("/home/e706/zhanxiangning/KG/transE/relationVector.txt")
+    transE.writeEntityVector("/home/e706/zhanxiangning/KG/transE/entityVector.txt")
 
